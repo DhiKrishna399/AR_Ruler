@@ -17,6 +17,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     //Array to keep track of all the dotNodes
     var dotNodesArr = [SCNNode]()
     
+    var textNode = SCNNode()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -46,6 +48,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     //Keeps track of touches occuring on the application
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if dotNodesArr.count >= 2 {
+            for dot in dotNodesArr {
+                dot.removeFromParentNode()
+            }
+            
+            dotNodesArr = [SCNNode]()
+        }
         
         //touches is the set of UI touches we get when the screen is touched
         if let touchLocation = touches.first?.location(in: sceneView){
@@ -91,10 +101,27 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let b = end.position.y - start.position.y
         let c = end.position.z - start.position.z
         
-        let distance = sqrt(pow(a, 2) + pow(b, 2) + pow(c, 2))
+        let distance = abs(sqrt(pow(a, 2) + pow(b, 2) + pow(c, 2)))
+        let formatDist = String(format: "%.2f", distance)
+        print(formatDist)
         
-        print(abs(distance))
+        updateText(text: formatDist, lastPosition: end.position)
         
     }
+    
+    func updateText(text: String, lastPosition: SCNVector3){
+
+        textNode.removeFromParentNode()
+        let textGeo = SCNText(string: text + "m", extrusionDepth: 1.0)
+        textGeo.firstMaterial?.diffuse.contents = UIColor.red
+        
+        textNode = SCNNode(geometry: textGeo)
+        textNode.position = SCNVector3(lastPosition.x, lastPosition.y + 0.01, lastPosition.z)
+        textNode.scale = SCNVector3(0.01, 0.01, 0.01)
+        
+        sceneView.scene.rootNode.addChildNode((textNode))
+    }
+    
+    
  
 }
