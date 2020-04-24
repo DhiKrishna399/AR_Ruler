@@ -81,7 +81,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func calculate(){
-        let start
+        let start = dotNodesArr[0]
+        let end = dotNodesArr[1]
+        
+        print(start.position)
+        print(end.position)
+        
+        let a = end.position.x - start.position.x
+        let b = end.position.y - start.position.y
+        let c = end.position.z - start.position.z
+        
+        let distance = sqrt(pow(a, 2) + pow(b, 2) + pow(c, 2))
+        
+        print(abs(distance))
+        
     }
  
 }
